@@ -1,0 +1,20 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Animation/CAnimInstance.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
+void UCAnimInstance::NativeInitializeAnimation()
+{
+	Super::NativeInitializeAnimation();
+	if (OwningCharacter)
+	{
+		OwningCharacterMovementComponent = OwningCharacter->GetCharacterMovement();
+	}
+}
+
+void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+}
