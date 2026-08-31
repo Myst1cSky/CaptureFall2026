@@ -21,6 +21,14 @@ public:
 	// for the bulk of the work to be done in NativeThreadSafeUpdateAnimation.
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE bool IsMoving() const { return Speed > 0;}
+	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE bool IsNotMoving() const { return Speed == 0;}
+	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE bool IsOnGround() const { return !bIsFalling; }
 private:
 	UPROPERTY()
 	class ACharacter* OwningCharacter;
@@ -30,4 +38,18 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
 	float Speed;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	bool bIsFalling;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	float YawSpeed;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	float SmoothedYawSpeed;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	float YawSpeedSmoothLerpRate = 2.f;
+	
+	FRotator BodyPrevRotation;
 };
