@@ -29,6 +29,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
 	FORCEINLINE bool IsOnGround() const { return !bIsFalling; }
+	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE float GetLookYawOffset() const { return LookRotationOffset.Yaw; }
+	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE float GetLookPitchOffset() const { return LookRotationOffset.Pitch; }
 private:
 	UPROPERTY()
 	class ACharacter* OwningCharacter;
@@ -52,4 +58,7 @@ private:
 	float YawSpeedSmoothLerpRate = 2.f;
 	
 	FRotator BodyPrevRotation;
+	
+	UPROPERTY()
+	FRotator LookRotationOffset;
 };
