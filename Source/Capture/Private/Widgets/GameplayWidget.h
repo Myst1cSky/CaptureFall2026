@@ -14,9 +14,9 @@ class UGameplayWidget : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(meta=(Binding))
+	UPROPERTY(meta=(BindWidget))
 	class UValueGauge* HealthBar;
 	
-	UPROPERTY(meta=(Binding))
+	UPROPERTY(meta=(BindWidget))
 	class UValueGauge* ManaBar;
 };
