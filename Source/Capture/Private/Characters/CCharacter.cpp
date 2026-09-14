@@ -29,7 +29,7 @@ void ACCharacter::ServerSideInit()
 
 void ACCharacter::ClientSideInit()
 {
-	
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
 bool ACCharacter::IsLocallyControlledByPlayer() const
