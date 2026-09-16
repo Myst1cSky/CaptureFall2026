@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/GA_Combo.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/CAbilitySystemNativeTags.h"
+#include "GameplayTagsManager.h"
 
 UGA_Combo::UGA_Combo()
 {
@@ -34,5 +36,30 @@ void UGA_Combo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UGA_Combo::K2_EndAbility);
 		
 		PlayMontageAndWaitTask->ReadyForActivation();
+		
+		UAbilityTask_WaitGameplayEvent* WaitComboChangeEvent = 
+			UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, TAG_ABILITY_COMBO_CHANGE, nullptr, false, false);
+		
+		WaitComboChangeEvent->EventReceived.AddDynamic(this, &UGA_Combo::HandleComboChange);
+		
+		WaitComboChangeEvent->ReadyForActivation();
 	}
+}
+
+void UGA_Combo::HandleComboChange(FGameplayEventData EventData)
+{
+	FGameplayTag EventTag = EventData.EventTag;
+	if (EventTag == TAG_ABILITY_COMBO_CHANGE_End)
+	{
+		NextComboName = NAME_None;
+	
+		UE_LOG(LogTemp, Warning, TEXT("Next Combo Name changed to None"));
+		return;
+	}
+	
+	TArray<FName> TagNames;
+	UGameplayTagsManager::Get().SplitGameplayTagFName(EventTag, TagNames);
+	NextComboName = TagNames.Last();
+	
+	UE_LOG(LogTemp, Warning, TEXT("Next Combo Name changed to: %s"), *(NextComboName.ToString()));
 }
