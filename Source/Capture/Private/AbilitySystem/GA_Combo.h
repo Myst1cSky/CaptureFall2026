@@ -29,4 +29,9 @@ private:
 	void HandleComboChange(FGameplayEventData EventData);
 	
 	FName NextComboName;
+	
+	void SetupWaitInputPress();
+	
+	UFUNCTION()
+	void HandleComboInputPress(float TimeWaited);
 };
