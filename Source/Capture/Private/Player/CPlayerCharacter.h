@@ -31,7 +31,7 @@ private:
 	//                     Input                          //
 	//----------------------------------------------------//
 private:
-	UPROPERTY(VisibleDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<ECAbilityInputID, class UInputAction*> GameplayAbilityInputActions;
 	
 	void HandleLookInput(const struct  FInputActionValue& InputActionValue);
