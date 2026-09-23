@@ -15,4 +15,8 @@ class UGC_HitVFX : public UGameplayCueNotify_Static
 	GENERATED_BODY()
 public:
 	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters & Parameters) const;
+	
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	class UParticleSystem* VFX;
 };
