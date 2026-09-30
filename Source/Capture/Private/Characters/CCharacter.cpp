@@ -4,10 +4,12 @@
 #include "Characters/CCharacter.h"
 #include "AbilitySystem/CAbilitySystemComponent.h"
 #include "AbilitySystem/CAttributeSet.h"
+#include "AbilitySystem/CAbilitySystemNativeTags.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Capture/Capture.h"
 #include "Widgets/OverheadStatusGauge.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACCharacter::ACCharacter()
@@ -23,6 +25,16 @@ ACCharacter::ACCharacter()
 	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_CameraBoom, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_CameraBoom, ECR_Ignore);
+}
+
+void ACCharacter::BindGASDelegates()
+{
+	if (bGASDelegateBound || !AbilitySystemComponent)
+		return;
+	
+	bGASDelegateBound = true;
+	
+	AbilitySystemComponent->RegisterGameplayTagEvent(TAG_STAT_DEAD).AddUObject(this, &ACCharacter::DeathTagUpdated);
 }
 
 void ACCharacter::ServerSideInit()
@@ -51,11 +63,24 @@ void ACCharacter::PossessedBy(AController* NewController)
 	}
 }
 
+void ACCharacter::DeathTagUpdated(const FGameplayTag Tag, int32 Count)
+{
+	if (Count != 0)
+	{
+		StartDeathSequence();
+	}
+	else
+	{
+		Respawn();
+	}
+}
+
 // Called when the game starts or when spawned
 void ACCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	ConfigureOverheadWidgetComponent();
+	BindGASDelegates();
 	
 }
 
@@ -76,6 +101,47 @@ void ACCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 UAbilitySystemComponent* ACCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void ACCharacter::StartDeathSequence()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Start Death Sequence"));
+	PlayDeathMontage();
+	
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
+}
+
+void ACCharacter::Respawn()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Respawn"));
+	
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
+	
+	//Doing both on the server and client.
+	CAttributeSet->SetHealth(CAttributeSet->GetMaxHealth());
+}
+
+void ACCharacter::PlayDeathMontage()
+{
+	if (DeathMontage)
+	{
+		PlayAnimMontage(DeathMontage);
+	}
 }
 
 void ACCharacter::ConfigureOverheadWidgetComponent()
