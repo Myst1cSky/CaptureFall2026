@@ -7,6 +7,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "CGameMode.generated.h"
 
+
 /**
  * 
  */
@@ -19,4 +20,10 @@ public:
 	virtual APlayerController* SpawnPlayerController(ENetRole InRemoteRole, const FString& Options);
 	
 	FGenericTeamId GetTeamIdForPlayer(const APlayerController* PlayerController);
+	
+private:
+	AActor* FindNextStartSpotForTeam(const FGenericTeamId& TeamId);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	TMap<FGenericTeamId, FName> TeamPlayerStartTagMap;
 };

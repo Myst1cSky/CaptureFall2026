@@ -142,6 +142,11 @@ void ACCharacter::Respawn()
 	//Doing both on the server and client.
 	CAttributeSet->SetHealth(CAttributeSet->GetMaxHealth());
 	StopAnimMontage(DeathMontage);
+	if (HasAuthority() && GetController()->StartSpot.IsValid())
+	{
+		SetActorTransform(GetController()->StartSpot->GetActorTransform());
+	}
+
 }
 
 bool ACCharacter::IsDead() const
