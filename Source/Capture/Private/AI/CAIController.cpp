@@ -2,11 +2,13 @@
 
 
 #include "AI/CAIController.h"
-
-#include "GameplayCueNotifyTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/CAbilitySystemNativeTags.h"
 
 ACAIController::ACAIController()
 {
@@ -47,6 +49,13 @@ void ACAIController::BeginPlay()
 	
 	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIController::TargetPerceptionUpdated);
 	AIPerceptionComponent->OnTargetPerceptionForgotten.AddDynamic(this, &ACAIController::TargetForgotten);
+	
+	UBlackboardComponent* BlackboardComp = GetBlackboardComponent();
+	if (BlackboardComp && GetPawn())
+	{
+		FVector PatrolCenterLocation = GetPawn()->GetActorLocation();
+		BlackboardComp->SetValueAsVector(BlackboardPatrolCenterKeyName, PatrolCenterLocation);
+	}
 }
 
 void ACAIController::TargetForgotten(AActor* ForgottenActor)
@@ -58,6 +67,11 @@ void ACAIController::TargetForgotten(AActor* ForgottenActor)
 	{
 		SetCurrentTarget(GetNextPerceivedActor());
 	}
+	
+	if (!GetCurrentTarget() && GetBlackboardComponent())
+	{
+		GetBlackboardComponent()->SetValueAsVector(BlackboardLastSeenLocationKeyName, ForgottenActor->GetActorLocation());
+	}
 }
 
 void ACAIController::TargetPerceptionUpdated(AActor* TargetActor, FAIStimulus Stimulus)
@@ -67,6 +81,37 @@ void ACAIController::TargetPerceptionUpdated(AActor* TargetActor, FAIStimulus St
 		if (!GetCurrentTarget())
 		{
 			SetCurrentTarget(TargetActor);
+		}
+	}
+	else
+	{
+		ForgetActorIfDead(TargetActor);
+	}
+}
+
+void ACAIController::ForgetActorIfDead(AActor* ActorToForget)
+{
+	const UAbilitySystemComponent* ActorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActorToForget);
+	if (!ActorASC)
+		return;
+	
+	if (ActorASC->HasMatchingGameplayTag(TAG_STAT_DEAD))
+	{
+		// If we can alter the age to be max float
+		for (UAIPerceptionComponent::TActorPerceptionContainer::TIterator Iter = 
+			AIPerceptionComponent->GetPerceptualDataIterator(); 
+			Iter; 
+			++Iter)
+		{
+			if (Iter->Key != ActorToForget)
+			{
+				continue;
+			}
+			
+			for (FAIStimulus& Stimulus : Iter->Value.LastSensedStimuli)
+			{
+				Stimulus.SetStimulusAge(TNumericLimits<float>::Max());
+			}
 		}
 	}
 }

@@ -57,10 +57,11 @@ private:
 	//------------------------------------------------------------//
 	//                  Death  & Respawn Sequence                            //
 	//------------------------------------------------------------//
+public:
+	bool IsDead() const;
 private:
 	void StartDeathSequence();
 	void Respawn();
-	bool IsDead() const;
 	
 	void SetRagdollEnabled(bool bEnabled);
 	
@@ -104,4 +105,15 @@ public:
 private:
 	UPROPERTY(Replicated)
 	FGenericTeamId TeamID;
+	
+	//----------------------------------------------------//
+	//                   AI Perception                    //
+	//----------------------------------------------------//
+	
+private:
+	UPROPERTY()
+	class UAIPerceptionStimuliSourceComponent* AIPerceptionStimuliSourceComponent;
+	
+	void SetAIPerceptionStimuliSourceEnabled(bool bIsStimuliSourceEnabled);
+	
 };
