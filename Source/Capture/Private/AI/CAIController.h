@@ -30,6 +30,9 @@ private:
 	class UBehaviorTree* BehaviorTree;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Behavior")
+	class UStateTreeAIComponent* StateTreeComponent;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Behavior")
 	FName BlackboardTargetKeyName = "Target";
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Behavior")
@@ -51,4 +54,7 @@ private:
 	AActor* GetNextPerceivedActor() const;
 	
 	void ForgetActorIfDead(AActor* ActorToForget);
+	
+	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess="true"))
+	AActor* CurrentTarget;
 };

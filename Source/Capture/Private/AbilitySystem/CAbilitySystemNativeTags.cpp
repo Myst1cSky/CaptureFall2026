@@ -10,6 +10,7 @@ UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_CHANGE_Combo02, "ability.combo.
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_CHANGE_Combo03, "ability.combo.change.combo03", "tag to send the combo ability to signal what is next combo");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_CHANGE_Combo04, "ability.combo.change.combo04", "tag to send the combo ability to signal what is next combo");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_CHANGE_End, "ability.combo.change.end", "tag to send the combo ability to signal no combo any more");
-UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_DAMAGE, "ability.combo.damage", "tag to sent to the combo ability to ask it to do damage");
 
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_ABILITY_COMBO_DAMAGE, "ability.combo.damage", "tag to sent to the combo ability to ask it to do damage");
 UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_STAT_DEAD, "stat.dead", "tag added to the character when they are dead");
+UE_DEFINE_GAMEPLAY_TAG_COMMENT(TAG_PERCEPTION_TARGET_CHANGE, "perception.target.change", "tag added to the character when they are the target");
