@@ -48,7 +48,7 @@ private:
 	
 	bool bGASDelegateBound;
 	
-	UPROPERTY(VisibleDefaultsOnly, Category = "Ability System")
+	UPROPERTY(VisibleAnywhere, Category = "Ability System", meta  = (AllowPrivateAccess = "true"))
 	class UCAbilitySystemComponent* AbilitySystemComponent;
 	
 	UPROPERTY()
