@@ -2,6 +2,9 @@
 
 
 #include "Animation/CAnimInstance.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/CAbilitySystemNativeTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -14,6 +17,11 @@ void UCAnimInstance::NativeInitializeAnimation()
 	{
 		OwningCharacterMovementComponent = OwningCharacter->GetCharacterMovement();
 	}
+	
+	if (UAbilitySystemComponent* OwnerASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TryGetPawnOwner()))
+	{
+		OwnerASC->RegisterGameplayTagEvent(TAG_STAT_AIMING).AddUObject(this, &UCAnimInstance::AimTagUpdated);
+	}
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -21,6 +29,9 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	if (OwningCharacter)
 	{
+		FVector Velocity = OwningCharacter->GetVelocity();
+		Speed = Velocity.Length();
+		
 		Speed = OwningCharacter->GetVelocity().Length();
 		
 		FRotator BodyRotation = OwningCharacter->GetActorRotation();
@@ -31,12 +42,19 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		BodyPrevRotation = BodyRotation;
 		
 		FRotator ControlRotation = OwningCharacter->GetBaseAimRotation();
-		
 		LookRotationOffset = UKismetMathLibrary::NormalizedDeltaRotator(ControlRotation, BodyRotation);
+		
+		ForwardSpeed = Velocity.Dot(ControlRotation.Vector());
+		RightSpeed = -Velocity.Dot(ControlRotation.Vector().Cross(FVector::UpVector));
 	}
 	
 	if (OwningCharacterMovementComponent)
 	{
 		bIsFalling = OwningCharacterMovementComponent->IsFalling();
 	}
+}
+
+void UCAnimInstance::AimTagUpdated(const FGameplayTag Tag, int32 NewCount)
+{
+	bIsAiming = NewCount != 0;
 }

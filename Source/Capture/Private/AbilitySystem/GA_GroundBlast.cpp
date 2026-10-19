@@ -3,10 +3,15 @@
 
 #include "AbilitySystem/GA_GroundBlast.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "CAbilitySystemNativeTags.h"
 
-void UGA_GroundBlast::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo GameplayAbilityActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+UGA_GroundBlast::UGA_GroundBlast()
+{
+	ActivationOwnedTags.AddTag(TAG_STAT_AIMING);
+}
+
+void UGA_GroundBlast::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, 
+const FGameplayAbilityActivationInfo GameplayAbilityActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	if (!HasAuthorityOrPredictionKey(CurrentActorInfo, &CurrentActivationInfo))
 	{

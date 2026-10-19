@@ -26,7 +26,7 @@ void UGA_Combo::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const F
 		return;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Casting Combo Ability"))
+	NextComboName = NAME_None;
 	
 	if (HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
 	{

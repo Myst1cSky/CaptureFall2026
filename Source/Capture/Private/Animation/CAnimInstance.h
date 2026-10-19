@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "GameplayTagContainer.h"
 #include "CAnimInstance.generated.h"
 
 /**
@@ -20,6 +21,9 @@ public:
 	// Native update override point. It is usually a good idea to simply gather data in this step and
 	// for the bulk of the work to be done in NativeThreadSafeUpdateAnimation.
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	
+	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
+	FORCEINLINE bool ShouldDoFullBody() const {return !IsMoving() && !bIsAiming; }
 	
 	UFUNCTION(BlueprintCallable, meta =(BlueprintThreadSafe))
 	FORCEINLINE bool IsMoving() const { return Speed > 0;}
@@ -54,6 +58,15 @@ private:
 	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
 	float SmoothedYawSpeed;
 	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	bool bIsAiming;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	float ForwardSpeed;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	float RightSpeed;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	float YawSpeedSmoothLerpRate = 2.f;
 	
@@ -61,4 +74,6 @@ private:
 	
 	UPROPERTY()
 	FRotator LookRotationOffset;
+	
+	void AimTagUpdated(const FGameplayTag Tag, int32 NewCount);
 };

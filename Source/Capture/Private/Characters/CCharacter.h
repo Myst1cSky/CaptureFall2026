@@ -44,7 +44,9 @@ public:
 private:
 	void BindGASDelegates();
 	
+	void AimTagUpdated(FGameplayTag GameplayTag, int32 Count);
 	void DeathTagUpdated(const FGameplayTag Tag, int32 Count);
+	void SetIsAiming(bool bIsAiming);
 	
 	bool bGASDelegateBound;
 	
