@@ -18,11 +18,18 @@ public:
 	ATA_GroundPick();
 	
 	virtual void ConfirmTargetingAndContinue() override;
+	void SetTargetAreaRadius(float NewTargetAreaRadius);
+	void SetTargetTraceRange(float NewTargetTraceRange);
+	void SetShouldDrawDebug(bool NewShouldDrawDebug);
+	void AddTargetTeamAttitude(ETeamAttitude::Type NewTeamAttitude);
 	
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 	
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	class UDecalComponent* DecalComponent;
+	
 	FVector GetTargetPoint() const;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Targeting")

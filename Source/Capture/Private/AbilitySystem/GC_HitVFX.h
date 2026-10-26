@@ -19,4 +19,7 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX")
 	class UParticleSystem* VFX;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "VFX")
+	float VFXScale = 1.f;
 };

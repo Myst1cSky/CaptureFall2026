@@ -13,7 +13,7 @@ bool UGC_HitVFX::OnExecute_Implementation(AActor* MyTarget, const FGameplayCuePa
 	if (HitResult)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), VFX, HitResult->ImpactPoint, 
-			UKismetMathLibrary::MakeRotFromX(HitResult->ImpactNormal));
+			UKismetMathLibrary::MakeRotFromX(HitResult->ImpactNormal), FVector{VFXScale});
 	}
 	
 	return true;

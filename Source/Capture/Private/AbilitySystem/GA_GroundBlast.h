@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/CGameplayAbility.h"
+#include "GameplayTagContainer.h"
 #include "GA_GroundBlast.generated.h"
 
 /**
@@ -23,6 +24,15 @@ public:
 	) override;
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "GameplayCue", meta =(Categories="GameplayCue"))
+	FGameplayTagContainer BlastingGameplayCueTags;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetTraceRange = 2000.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetAreaRadius = 400.f;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* CastMontage;
 	
@@ -31,6 +41,12 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Effect")
 	TSubclassOf<class UGameplayEffect> DamageEffect;
+	
+	//UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	//TSubclassOf<class UGameplayEffect> StunEffect;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	float StunDuration = 3.f;
 	
 	UFUNCTION()
 	void TargetConfirmed(const FGameplayAbilityTargetDataHandle& TargetDataHandle);

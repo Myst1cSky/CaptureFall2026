@@ -49,6 +49,7 @@ void ACCharacter::BindGASDelegates()
 	
 	AbilitySystemComponent->RegisterGameplayTagEvent(TAG_STAT_DEAD).AddUObject(this, &ACCharacter::DeathTagUpdated);
 	AbilitySystemComponent->RegisterGameplayTagEvent(TAG_STAT_AIMING).AddUObject(this, &ACCharacter::AimTagUpdated);
+	AbilitySystemComponent->RegisterGameplayTagEvent(TAG_STAT_STUN).AddUObject(this, &ACCharacter::StunTagUpdated);
 }
 
 void ACCharacter::ServerSideInit()
@@ -89,6 +90,26 @@ void ACCharacter::DeathTagUpdated(const FGameplayTag Tag, int32 Count)
 	}
 }
 
+void ACCharacter::StunTagUpdated(const FGameplayTag Tag, int32 Count)
+{
+	if (IsDead())
+	{
+		return;
+	}
+	
+	bool bIsStun = Count != 0;
+	if (bIsStun)
+	{
+		PlayAnimMontage(StunMontage);
+	}
+	else
+	{
+		StopAnimMontage(StunMontage);
+	}
+	
+	SetInputEnabledFromPlayerController(!bIsStun);
+}
+
 // Called when the game starts or when spawned
 void ACCharacter::BeginPlay()
 {
@@ -111,6 +132,22 @@ void ACCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ACCharacter::SetInputEnabledFromPlayerController(bool bNewInputEnabled)
+{
+	APlayerController* PlayerController = GetController<APlayerController>();
+	if (PlayerController)
+	{
+		if (bNewInputEnabled)
+		{
+			EnableInput(PlayerController);
+		}
+		else
+		{
+			DisableInput(PlayerController);
+		}
+	}
 }
 
 UAbilitySystemComponent* ACCharacter::GetAbilitySystemComponent() const
@@ -145,10 +182,11 @@ void ACCharacter::StartDeathSequence()
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
-	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController)
+	SetInputEnabledFromPlayerController(false);
+	
+	if (AbilitySystemComponent)
 	{
-		DisableInput(PlayerController);
+		AbilitySystemComponent->CancelAllAbilities();
 	}
 }
 
@@ -160,11 +198,7 @@ void ACCharacter::Respawn()
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
-	APlayerController* PlayerController = GetController<APlayerController>();
-	if (PlayerController)
-	{
-		EnableInput(PlayerController);
-	}
+	SetInputEnabledFromPlayerController(true);
 	
 	//Doing both on the server and client.
 	CAttributeSet->SetHealth(CAttributeSet->GetMaxHealth());

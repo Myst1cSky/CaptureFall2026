@@ -36,6 +36,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+private:
+	void SetInputEnabledFromPlayerController(bool bNewInputEnabled);
+	
 //------------------------------------------------------------//
 //                   Gameplay Ability                         //
 //------------------------------------------------------------//	
@@ -46,6 +50,7 @@ private:
 	
 	void AimTagUpdated(FGameplayTag GameplayTag, int32 Count);
 	void DeathTagUpdated(const FGameplayTag Tag, int32 Count);
+	void StunTagUpdated(const FGameplayTag Tag, int32 Count);
 	void SetIsAiming(bool bIsAiming);
 	virtual void OnAimStatChanged(bool bNewIsAiming);
 	
@@ -58,11 +63,14 @@ private:
 	class UCAttributeSet* CAttributeSet;
 	
 	//------------------------------------------------------------//
-	//                  Death  & Respawn Sequence                            //
+	//                  Death  & Stun & Respawn Sequence          //
 	//------------------------------------------------------------//
 public:
 	bool IsDead() const;
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
+	UAnimMontage* StunMontage;
+	
 	void StartDeathSequence();
 	void Respawn();
 	
