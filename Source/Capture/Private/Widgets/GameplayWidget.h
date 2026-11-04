@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
 #include "Blueprint/UserWidget.h"
+#include "AbilitySystem/CAbilityInputID.h"
 #include "GameplayWidget.generated.h"
 
 /**
@@ -15,13 +17,16 @@ class UGameplayWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	virtual void NativeConstruct() override;
-	
+	void InitializedWithAbilities(const TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& Abilities);
 private:
 	UPROPERTY(meta=(BindWidget))
 	class UValueGauge* HealthBar;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UValueGauge* ManaBar;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UAbilityListView* AbilityListView;
 	
 	UPROPERTY()
 	const class UAbilitySystemComponent* OwnerAbilitySystemComponent;

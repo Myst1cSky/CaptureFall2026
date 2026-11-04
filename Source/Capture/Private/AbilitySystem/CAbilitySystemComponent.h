@@ -17,7 +17,9 @@ class UCAbilitySystemComponent : public UAbilitySystemComponent
 public:
 	UCAbilitySystemComponent();
 	void ApplyInitialEffects();
-	void GiveInitialAbilities();
+	void GiveAbilites();
+	
+	const TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& GetInitialAbilities() const;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effect")
@@ -25,6 +27,9 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Ability")
 	TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>> InitialAbilities;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Ability")
+	TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>> BasicAbilities;
 	
 	void HealthChanged(const struct FOnAttributeChangeData& ChangeData);
 	

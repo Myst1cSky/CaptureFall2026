@@ -20,6 +20,11 @@ void ACCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& Ou
 	DOREPLIFETIME(ACCharacter, TeamID);
 }
 
+const TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& ACCharacter::GetInitialAbilities() const
+{
+	return AbilitySystemComponent->GetInitialAbilities();
+}
+
 // Sets default values
 ACCharacter::ACCharacter()
 {
@@ -56,7 +61,7 @@ void ACCharacter::ServerSideInit()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	AbilitySystemComponent->ApplyInitialEffects();
-	AbilitySystemComponent->GiveInitialAbilities();
+	AbilitySystemComponent->GiveAbilites();
 }
 
 void ACCharacter::ClientSideInit()

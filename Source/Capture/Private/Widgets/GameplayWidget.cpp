@@ -5,12 +5,14 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/CAttributeSet.h"
+#include "AbilitySystem/CAbilitySystemComponent.h"
 #include "Widgets/ValueGauge.h"
-
+#include "Widgets/AbilityListView.h"
 void UGameplayWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwningPlayerPawn());
+	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
+		GetOwningPlayerPawn());
 	
 	HealthBar->SetAndBindWithAbilitySystemComponent(AbilitySystemComponent, 
 		UCAttributeSet::GetHealthAttribute(), UCAttributeSet::GetMaxHealthAttribute());
@@ -19,4 +21,9 @@ void UGameplayWidget::NativeConstruct()
 		UCAttributeSet::GetManaAttribute(), UCAttributeSet::GetMaxManaAttribute());
 	
 	OwnerAbilitySystemComponent = AbilitySystemComponent;
+}
+
+void UGameplayWidget::InitializedWithAbilities(const TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& Abilities)
+{
+	AbilityListView->ConfigureAbilities(Abilities);
 }

@@ -4,6 +4,7 @@
 #include "Player/CPlayerController.h"
 #include "Player/CPlayerCharacter.h"
 #include "Widgets/GameplayWidget.h"
+#include "AbilitySystem/CAbilityInputID.h"
 #include "Net/UnrealNetwork.h"
 
 void ACPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -48,6 +49,7 @@ void ACPlayerController::SpawnGameplayWidget()
 		{
 			GameplayWidget = CreateWidget<UGameplayWidget>(this, GameplayWidgetClass);
 			GameplayWidget->AddToViewport();
+			GameplayWidget->InitializedWithAbilities(CPlayerCharacter->GetInitialAbilities());
 		}
 	}
 }
