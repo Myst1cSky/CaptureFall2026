@@ -24,16 +24,23 @@ struct FAbilityWidgetData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Description;
 };
+
 /**
  * 
  */
+
 UCLASS()
 class UAbilityGauge : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 public:
+	virtual void NativeConstruct() override;
+	
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 	void ConfigureWithWidgetData(const FAbilityWidgetData* AbilityWidgetData);
+	
+	float GetStaticCooldownDuration() const;
+	float GetStaticCost() const;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
@@ -50,4 +57,27 @@ private:
 	
 	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* CooldownCounterText;
+	
+	UPROPERTY()
+	const class UGameplayAbility* CachedAbilityCDO;
+	
+	void AbilityCommitted(UGameplayAbility* Ability);
+	
+	void StartCooldown(float CooldownTimeRemaining, float CooldownDuration);
+	void UpdateCooldown();
+	void CooldownFinished();
+	
+	FTimerHandle CooldownTimerHandle;
+	FTimerHandle CooldownTimerUpdateHandle;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Cooldown")
+	float CooldownUpdateInterval = 0.1f;
+	
+	float CachedCooldownDuration;
+	float CachedCooldownTimeRemaining;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Cooldown")
+	FName CooldownPerceptParamName = "Percent";
+	
+	void AbilitySpecUpdated(const struct FGameplayAbilitySpec& AbilitySpec);
 };
